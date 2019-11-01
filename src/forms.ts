@@ -4,9 +4,7 @@ import { Either } from 'fp-ts/lib/Either';
 export interface Form<A> {
   map: <B>(f: (a: A) => B) => Form<B>;
   ap: <B>(fab: Form<(a: A) => B>) => Form<B>;
-  apR: A extends (...args: any) => any
-    ? (fab: Form<Parameters<A>[0]>) => Form<ReturnType<A>>
-    : <B>(fab: Form<A>) => Form<B>;
+  apF: A extends (...args: any) => any ? (fab: Form<Parameters<A>[0]>) => Form<ReturnType<A>> : never;
 }
 
 export const applicativeForm = {

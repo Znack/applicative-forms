@@ -25,14 +25,14 @@ const passwordsForm: Form<RegistrationPasswordsInput> = textField('confirmation'
   map(textField('primary'), gatherPasswords),
 );
 
-export const registrationForm: Form<RegistrationInput> = passwordsForm
+export const registrationForm: Form<RegistrationInput> = of(gatherForm)
+  .apF(textField('name'))
+  .apF(intField('age'))
+  .apF(passwordsForm);
+
+export const registrationFormClassic: Form<RegistrationInput> = passwordsForm
   .ap(intField('age').map(age => passwords => ({ age, passwords })))
   .ap(map(textField('name'), name => ({ age, passwords }) => ({ name, age, passwords })));
-
-export const registrationFormWithPure: Form<RegistrationInput> = of(gatherForm)
-  .apR(textField('name'))
-  .apR(intField('age'))
-  .apR(passwordsForm);
 
 export const prefixForm: Form<RegistrationInput> = ap(
   ap(map(textField('name'), gatherForm), intField('age')),
