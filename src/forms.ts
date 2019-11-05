@@ -31,8 +31,10 @@ export type UpdateError = { error: 'unknownField'; fieldName: string } | { error
 
 export const updateField = <A, B>(form: Form<A>, field: Form<B>, raw: string): Either<UpdateError, Form<A>> =>
   right(form);
-export const updateFields = <A, B>(form: Form<A>, fields: Array<[Form<B>, string]>): Either<UpdateError, Form<A>> =>
-  right(form);
+export const updateFields = <A>(
+  form: Form<A>,
+  ...fields: Array<[Form<unknown>, string]>
+): Either<UpdateError, Form<A>> => right(form);
 
 // — some stupid law example
 // — multiple application of updateField should be identical to updateFields
@@ -53,5 +55,6 @@ export const updateFields = <A, B>(form: Form<A>, fields: Array<[Form<B>, string
 // ===
 // updateFields(
 //   form,
-//   [[firstField, x], [secondField, y]]
+//   [firstField, x],
+//   [secondField, y]
 // )
