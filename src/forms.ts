@@ -29,11 +29,12 @@ export const textField = (fieldName: string): Form<string> => empty(fieldName);
 export const optionalTextField = (fieldName: string): Form<Option<string>> => empty(fieldName);
 export const intField = (fieldName: string): Form<number> => empty(fieldName);
 export const withInitial = <A>(initialValue: A, form: Form<A>): Form<A> => null as any;
-export const withValidator = <A>(validate: (raw: string) => Either<Array<string>, A>, form: Form<A>): Form<A> =>
+export const withValidator = <A>(validate: (raw: string) => Either<Array<FormError>, A>, form: Form<A>): Form<A> =>
   null as any;
 
 export type UpdateError = { error: 'unknownField'; fieldName: string } | { error: 'fieldIsNotPrimitive' };
 
+export const getFieldValue = <A, B>(form: Form<A>, field: Form<B>): Form<B> => null as any;
 export const updateField = <A, B>(form: Form<A>, field: Form<B>, raw: string): Either<UpdateError, Form<A>> =>
   right(form);
 export const updateFields = <A>(

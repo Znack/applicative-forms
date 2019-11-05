@@ -10,6 +10,7 @@ import {
   UpdateError,
   updateField,
   updateFields,
+  FormError,
 } from './forms';
 import { Either, right, left } from 'fp-ts/lib/Either';
 
@@ -17,7 +18,7 @@ interface RegistrationPasswordsInput {
   passwordPrimary: string;
   passwordConfirmation: string;
 }
-interface RegistrationInput {
+export interface RegistrationInput {
   name: string;
   age: number;
   passwords: RegistrationPasswordsInput;
@@ -35,17 +36,17 @@ const gatherForm = (name: string) => (age: number) => (passwords: RegistrationPa
 });
 
 // abstract validators
-const intValidator = (raw: string): Either<string[], number> =>
-  isNaN(+raw) ? left(['invalidNumber']) : right(Number(raw));
+const intValidator = (raw: string): Either<FormError[], number> =>
+  isNaN(+raw) ? left([{ code: 'invalidNumber', description: '' }]) : right(Number(raw));
 
-const minLengthStringValidator = (minLength: number) => (raw: string): Either<string[], string> =>
-  raw.length < minLength ? left(['invalidLength']) : right(raw);
+const minLengthStringValidator = (minLength: number) => (raw: string): Either<FormError[], string> =>
+  raw.length < minLength ? left([{ code: 'invalidLength', description: '' }]) : right(raw);
 
 // form fields, we had better declare it separately and save in vars
-const nameField = withInitial('John', textField('name'));
-const ageField = withValidator(intValidator, intField('age'));
-const primaryPasswordField = withValidator(minLengthStringValidator(7), textField('primary'));
-const confirmationPasswordField = withValidator(minLengthStringValidator(7), textField('confirmation'));
+export const nameField = withInitial('John', textField('name'));
+export const ageField = withValidator(intValidator, intField('age'));
+export const primaryPasswordField = withValidator(minLengthStringValidator(7), textField('primary'));
+export const confirmationPasswordField = withValidator(minLengthStringValidator(7), textField('confirmation'));
 
 // forms declarations
 const passwordsForm: Form<RegistrationPasswordsInput> = of(gatherPasswords)
