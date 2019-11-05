@@ -44,10 +44,12 @@ export const updateFields = <A>(
 
 export const getErrors = (form: Form<unknown>): FormError[] => [];
 export const hasErrors = <A>(form: Form<A>): boolean => getErrors(form).length > 0;
+export const isPristine = <A>(form: Form<A>): boolean => false;
 export const getValidated = <A>(form: Form<A>): Option<A> => none;
-export const getOrElse = <A>(defaultValue: A, form: Form<A>): A => getValidated(form).getOrElse(defaultValue);
-export const onValid = <A, B>(defaultValue: B, projection: (a: A) => B, form: Form<A>): B => defaultValue;
 export const getRawValue = <A>(form: Form<A>): string => '';
+export const getOrElse = <A>(defaultValue: A, form: Form<A>): A => getValidated(form).getOrElse(defaultValue);
+export const projectValid = <A, B>(defaultValue: B, projection: (a: A) => B, form: Form<A>): B =>
+  getValidated(form.map(projection)).getOrElse(defaultValue);
 
 // — some stupid law example
 // — multiple application of updateField should be identical to updateFields

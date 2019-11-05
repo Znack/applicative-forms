@@ -1,11 +1,5 @@
-import { Form, onValid, getFieldValue, getRawValue, hasErrors, getErrors, updateField } from './forms';
-import {
-  RegistrationInput,
-  nameField,
-  ageField,
-  primaryPasswordField,
-  confirmationPasswordField,
-} from './registration';
+import { Form, projectValid, getFieldValue, getRawValue, isPristine, hasErrors, getErrors, updateField } from './forms';
+import { RegistrationInput, nameField, ageField } from './registration';
 import { ReactNode } from 'react';
 import * as React from 'react';
 import { constant } from 'fp-ts/lib/function';
@@ -14,11 +8,10 @@ export const renderExample = (
   form: Form<RegistrationInput>,
   onNewForm: (form: Form<RegistrationInput>) => void,
 ): ReactNode => {
-  const isValid = onValid(false, constant(true), form);
+  const isValid = projectValid(false, constant(true), form);
   const name = getFieldValue(form, nameField);
   const age = getFieldValue(form, ageField);
-  const primaryPassword = getFieldValue(form, primaryPasswordField);
-  const confirmationPassword = getFieldValue(form, confirmationPasswordField);
+
   return (
     <div>
       <div>
@@ -34,7 +27,7 @@ export const renderExample = (
             }
           />
         </label>
-        {hasErrors(name) && getErrors(name).map(error => <span>{error.description}</span>)}
+        {!isPristine(name) && hasErrors(name) && getErrors(name).map(error => <span>{error.description}</span>)}
       </div>
       <div>
         <label>
@@ -46,7 +39,7 @@ export const renderExample = (
             }
           />
         </label>
-        {hasErrors(age) && getErrors(age).map(error => <span>{error.description}</span>)}
+        {!isPristine(age) && hasErrors(age) && getErrors(age).map(error => <span>{error.description}</span>)}
       </div>
       {isValid ? <button>Submit</button> : <span>Fix errors</span>}
     </div>
