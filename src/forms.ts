@@ -1,5 +1,10 @@
-import { Option } from 'fp-ts/lib/Option';
+import { Option, none } from 'fp-ts/lib/Option';
 import { Either, right } from 'fp-ts/lib/Either';
+
+export type FormError = {
+  code: string;
+  description: string;
+};
 
 export interface Form<A> {
   map: <B>(f: (a: A) => B) => Form<B>;
@@ -35,6 +40,13 @@ export const updateFields = <A>(
   form: Form<A>,
   ...fields: Array<[Form<unknown>, string]>
 ): Either<UpdateError, Form<A>> => right(form);
+
+export const getErrors = (form: Form<unknown>): FormError[] => [];
+export const hasErrors = <A>(form: Form<A>): boolean => getErrors(form).length > 0;
+export const getValidated = <A>(form: Form<A>): Option<A> => none;
+export const getOrElse = <A>(defaultValue: A, form: Form<A>): A => getValidated(form).getOrElse(defaultValue);
+export const onValid = <A, B>(defaultValue: B, projection: (a: A) => B, form: Form<A>): B => defaultValue;
+export const getRawValue = <A>(form: Form<A>): string => '';
 
 // — some stupid law example
 // — multiple application of updateField should be identical to updateFields
