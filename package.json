@@ -9,6 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fp-ts": "^1.19.5"
+    "@types/react": "^16.9.11",
+    "fp-ts": "^1.19.5",
+    "io-ts": "^1.10.4",
+    "io-ts-types": "^0.5.1",
+    "react": "^16.11.0"
   }
 }

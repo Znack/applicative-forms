@@ -15,8 +15,10 @@
     ],
     "module": "esnext",
     "moduleResolution": "node",
+    "allowSyntheticDefaultImports": false,
     "sourceMap": true,
     "target": "es5",
+    "jsx": "react",
     "typeRoots": [
       "node_modules/@types"
     ]
