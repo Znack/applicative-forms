@@ -4,13 +4,12 @@ import {
   intField,
   map,
   ap,
-  of,
   withInitial,
   withValidator,
   UpdateError,
   updateField,
-  updateFields,
   FormError,
+  form,
 } from './forms';
 import { Either, right, left } from 'fp-ts/lib/Either';
 
@@ -43,30 +42,27 @@ const minLengthStringValidator = (minLength: number) => (raw: string): Either<Fo
   raw.length < minLength ? left([{ code: 'invalidLength', description: '' }]) : right(raw);
 
 // form fields, we had better declare it separately and save in vars
-export const nameField = withInitial('John', textField('name'));
-export const ageField = withValidator(intValidator, intField('age'));
-export const primaryPasswordField = withValidator(minLengthStringValidator(7), textField('primary'));
-export const confirmationPasswordField = withValidator(minLengthStringValidator(7), textField('confirmation'));
+export const nameField = withInitial('John', textField());
+export const ageField = withValidator(intValidator, intField());
+export const primaryPasswordField = withValidator(minLengthStringValidator(7), textField());
+export const confirmationPasswordField = withValidator(minLengthStringValidator(7), textField());
 
 // forms declarations
-const passwordsForm: Form<RegistrationPasswordsInput> = of(gatherPasswords)
+const passwordsForm: Form<RegistrationPasswordsInput> = form(gatherPasswords)
   .addField(primaryPasswordField)
   .addField(confirmationPasswordField);
 
-export const registrationForm: Form<RegistrationInput> = of(gatherForm)
+export const registrationForm: Form<RegistrationInput> = form(gatherForm)
   .addField(nameField)
   .addField(ageField)
   .addField(passwordsForm);
 
 // alternative form declarations just for demo purposes, will be not used later
 export const registrationFormClassic: Form<RegistrationInput> = passwordsForm
-  .ap(intField('age').map(age => passwords => ({ age, passwords })))
-  .ap(map(textField('name'), name => ({ age, passwords }) => ({ name, age, passwords })));
+  .ap(intField().map(age => passwords => ({ age, passwords })))
+  .ap(map(textField(), name => ({ age, passwords }) => ({ name, age, passwords })));
 
-export const prefixForm: Form<RegistrationInput> = ap(
-  ap(map(textField('name'), gatherForm), intField('age')),
-  passwordsForm,
-);
+export const prefixForm: Form<RegistrationInput> = ap(ap(map(textField(), gatherForm), intField()), passwordsForm);
 
 // example of form updating
 export const updatePrimaryPassword = (form: Form<RegistrationInput>) => <A>(
@@ -75,4 +71,4 @@ export const updatePrimaryPassword = (form: Form<RegistrationInput>) => <A>(
 
 // example how to fill form with already prepared data
 export const toForm = ({ name, age }: { name: string; age: number }): Either<UpdateError, Form<RegistrationInput>> =>
-  updateFields(registrationForm, [nameField, name], [ageField, age.toString()]);
+  updateField(registrationForm, nameField, name).chain(form => updateField(form, ageField, age.toString()));
