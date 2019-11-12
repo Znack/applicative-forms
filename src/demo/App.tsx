@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { DemoRegistration } from './registration-component';
 import { toForm, RegistrationInput } from './registration';
-import { Form } from './forms';
+import { Form } from '../forms';
 
 const initial = toForm({ name: 'Kurt', age: 27 });
 const App = () =>

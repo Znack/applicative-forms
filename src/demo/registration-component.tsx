@@ -1,4 +1,13 @@
-import { Form, projectValid, getFieldValue, getRawValue, isPristine, hasErrors, getErrors, updateField } from './forms';
+import {
+  Form,
+  projectValid,
+  getFieldValue,
+  getRawValue,
+  isPristine,
+  hasErrors,
+  getErrors,
+  updateField,
+} from '../forms';
 import {
   RegistrationInput,
   nameField,

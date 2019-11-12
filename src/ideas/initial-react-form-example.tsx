@@ -1,3 +1,6 @@
+// It is just an example of initial ideas about React forms
+// It is placed here for inspiration :)
+
 import { OutputOf, string, type, Type, TypeOf, Validation } from 'io-ts';
 import * as React from 'react';
 import { useState } from 'react';

@@ -11,7 +11,8 @@ import {
   form,
   intValidator,
   minLengthStringValidator,
-} from './forms';
+  notEmptyStringValidator,
+} from '../forms';
 import { Either } from 'fp-ts/lib/Either';
 
 interface RegistrationPasswordsInput {
@@ -36,7 +37,7 @@ const gatherForm = (name: string) => (age: number) => (passwords: RegistrationPa
 });
 
 // form fields, we had better declare it separately and save in vars
-export const nameField = withInitial('John', textField());
+export const nameField = withValidator(notEmptyStringValidator, withInitial('John', textField()));
 export const ageField = withValidator(intValidator, intField());
 export const primaryPasswordField = withValidator(minLengthStringValidator(7), textField());
 export const confirmationPasswordField = withValidator(minLengthStringValidator(7), textField());

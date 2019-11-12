@@ -102,6 +102,14 @@ const setFieldRaw = <A>(fieldState: FieldState<A>, raw: string): Form<A> => ({
   },
 });
 
+const mergeMaps = (
+  left: Map<Form<unknown>, FieldState<unknown>>,
+  right: Map<Form<unknown>, FieldState<unknown>>,
+): Map<Form<unknown>, FieldState<unknown>> => {
+  right.forEach((field, key) => left.set(key, field));
+  return left;
+};
+
 export const applicativeForm = {
   map: <A, B>(fa: Form<A>, f: (a: A) => B): Form<B> => ({
     ...commonMethods,
@@ -151,9 +159,7 @@ export const applicativeForm = {
             fields:
               fa.state.type === 'form'
                 ? fab.state.type === 'form'
-                  ? ((fa.state.fields.forEach((field, key) =>
-                      (fab.state as FormState<unknown>).fields.set(key, field),
-                    ) as unknown) as false) || fab.state.fields
+                  ? mergeMaps(fab.state.fields, fa.state.fields)
                   : fa.state.fields.set(fab, fab.state)
                 : fab.state.type === 'form'
                 ? fab.state.fields.set(fa, fa.state)
@@ -263,6 +269,10 @@ export const intValidator = (raw: string): Either<FormError[], number> =>
     ? left([{ code: 'invalidNumber', description: 'Invalid number format, please use digits and negate sign only' }])
     : right(Number(raw));
 
+export const notEmptyStringValidator = (raw: string): Either<FormError[], string> =>
+  raw.length < 1
+    ? left([{ code: 'stringIsRequired', description: 'String is required, please type value' }])
+    : right(raw);
 export const minLengthStringValidator = (minLength: number) => (raw: string): Either<FormError[], string> =>
   raw.length < minLength
     ? left([{ code: 'invalidLength', description: `Minimum string length ${minLength} symbols is required` }])
