@@ -4,7 +4,7 @@ import { DemoRegistration } from './registration-component';
 import { toForm, RegistrationInput } from './registration';
 import { Form } from '../forms';
 
-const initial = toForm({ name: 'Kurt', age: 27 });
+const initial = toForm({ age: 27 });
 const App = () =>
   initial.isRight() ? (
     <Registration initialForm={initial.value} />

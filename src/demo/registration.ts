@@ -9,11 +9,11 @@ import {
   UpdateError,
   updateField,
   form,
-  intValidator,
   minLengthStringValidator,
   notEmptyStringValidator,
 } from '../forms';
-import { Either } from 'fp-ts/lib/Either';
+import { Either, right } from 'fp-ts/lib/Either';
+import { identity } from 'fp-ts/lib/function';
 
 interface RegistrationPasswordsInput {
   passwordPrimary: string;
@@ -37,8 +37,8 @@ const gatherForm = (name: string) => (age: number) => (passwords: RegistrationPa
 });
 
 // form fields, we had better declare it separately and save in vars
-export const nameField = withValidator(notEmptyStringValidator, withInitial('John', textField()));
-export const ageField = withValidator(intValidator, intField());
+export const nameField = withValidator(notEmptyStringValidator, withInitial(identity, 'John', textField()));
+export const ageField = intField();
 export const primaryPasswordField = withValidator(minLengthStringValidator(7), textField());
 export const confirmationPasswordField = withValidator(minLengthStringValidator(7), textField());
 
@@ -65,5 +65,7 @@ export const updatePrimaryPassword = (form: Form<RegistrationInput>) => <A>(
 ): Either<UpdateError, Form<RegistrationInput>> => updateField(form, primaryPasswordField, raw);
 
 // example how to fill form with already prepared data
-export const toForm = ({ name, age }: { name: string; age: number }): Either<UpdateError, Form<RegistrationInput>> =>
-  updateField(registrationForm, nameField, name).chain(form => updateField(form, ageField, age.toString()));
+export const toForm = ({ name, age }: { name?: string; age: number }): Either<UpdateError, Form<RegistrationInput>> =>
+  updateField(registrationForm, ageField, age.toString()).chain(form =>
+    name ? updateField(form, nameField, name) : right(form),
+  );

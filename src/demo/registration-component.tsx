@@ -1,13 +1,4 @@
-import {
-  Form,
-  projectValid,
-  getFieldValue,
-  getRawValue,
-  isPristine,
-  hasErrors,
-  getErrors,
-  updateField,
-} from '../forms';
+import { Form, getFieldValue, getRawValue, isPristine, hasErrors, getErrors, updateField, isValid } from '../forms';
 import {
   RegistrationInput,
   nameField,
@@ -27,7 +18,7 @@ export const DemoRegistration = ({
   form: Form<RegistrationInput>;
   onNewForm: (form: Form<RegistrationInput>) => void;
 }): JSX.Element => {
-  const isValid = projectValid(false, constant(true), form);
+  const isFormValid = isValid(form);
   const maybeName = getFieldValue(form, nameField);
   const maybeAge = getFieldValue(form, ageField);
   const maybePassword = getFieldValue(form, primaryPasswordField);
@@ -104,7 +95,7 @@ export const DemoRegistration = ({
             hasErrors(passwordConfirmation) &&
             getErrors(passwordConfirmation).map((error, index) => <span key={index}>{error.description}</span>)}
         </div>
-        {isValid ? <button>Submit</button> : <span>Fix errors</span>}
+        {isFormValid ? <button>Submit</button> : <span>Fix errors</span>}
       </div>
     ))
     .getOrElse(<div>Invalid form data, sorry</div>);

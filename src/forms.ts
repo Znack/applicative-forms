@@ -184,30 +184,27 @@ export const optionalTextField = (): Form<Option<string>> => empty(x => right(so
 export const intField = (): Form<number> => empty(intValidator);
 
 // Field combinators
-export const withInitial = <A>(initialValue: A, form: Form<A>): Form<A> => ({
-  map: form.map,
-  ap: form.ap,
-  addField: form.addField,
+export const withInitial = <A>(serialize: (a: A) => string, initialValue: A, form: Form<A>): Form<A> => ({
+  ...form,
   state:
     form.state.type === 'field'
       ? {
+          ...form.state,
           type: 'field',
           value: some(initialValue),
-          ...form.state,
+          status: 'validated',
+          raw: serialize(initialValue),
         }
       : form.state,
 });
 
 export const withValidator = <A>(validate: Validator<A>, form: Form<A>): Form<A> => ({
-  map: form.map,
-  ap: form.ap,
-  addField: form.addField,
+  ...form,
   state:
     form.state.type === 'field'
       ? {
-          type: 'field',
-          validator: validate,
           ...form.state,
+          validator: validate,
         }
       : form.state,
 });
@@ -248,10 +245,12 @@ export const getErrors = (form: Form<unknown>): FormError[] => (form.state.type 
 
 export const hasErrors = <A>(form: Form<A>): boolean => getErrors(form).length > 0;
 
-export const isPristine = <A>(form: Form<A>): boolean =>
+const isInStatus = <A>(status: FieldStatus, form: Form<A>): boolean =>
   form.state.type === 'field'
-    ? form.state.status === 'pristine'
-    : composeFieldStatuses(...Array.from(form.state.fields.values()).map(x => x.status)) === 'pristine';
+    ? form.state.status === status
+    : Array.from(form.state.fields.values()).every(x => x.status === status);
+export const isPristine = <A>(form: Form<A>): boolean => isInStatus('pristine', form);
+export const isValid = <A>(form: Form<A>): boolean => isInStatus('validated', form);
 
 export const getValidated = <A>(form: Form<A>): Option<A> =>
   form.state.type === 'field' ? form.state.value : form.state.value;
