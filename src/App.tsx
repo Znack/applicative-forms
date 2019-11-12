@@ -1,14 +1,20 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { DemoRegistration } from './registration-component';
-import { toForm } from './registration';
+import { toForm, RegistrationInput } from './registration';
+import { Form } from './forms';
 
 const initial = toForm({ name: 'Kurt', age: 27 });
-const App = (): JSX.Element =>
+const App = () =>
   initial.isRight() ? (
-    <DemoRegistration form={initial.value} onNewForm={val => console.log(val)} />
+    <Registration initialForm={initial.value} />
   ) : (
     <div>Initial data is invalid {initial.value.error}</div>
   );
+
+const Registration = ({ initialForm }: { initialForm: Form<RegistrationInput> }) => {
+  const [state, setState] = React.useState(initialForm);
+  return <DemoRegistration form={state} onNewForm={setState} />;
+};
 
 ReactDOM.render(<App />, document.getElementById('app'));
